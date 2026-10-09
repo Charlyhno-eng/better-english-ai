@@ -40,5 +40,4 @@ Start the backend and frontend in separate terminals:
 ./scripts/dev-frontend.sh
 ```
 
-
 Open the local URL printed by the frontend, then visit **Setup** to save your GLM API key and download the speech models. Model downloads require internet access and several gigabytes of disk space.
