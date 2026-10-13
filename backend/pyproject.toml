@@ -10,7 +10,10 @@ requires-python = ">=3.12"
 dependencies = ["fastapi>=0.115,<1", "uvicorn[standard]>=0.34,<1", "pydantic-settings>=2.8,<3", "httpx>=0.28,<1"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8,<10"]
+dev = [
+    "pytest>=8,<10",
+    "ruff>=0.17.0",
+]
 pronunciation = ["openpronounce[tts-piper]==0.3.0", "torch>=2.8,<3"]
 stt = ["nemo_toolkit[asr]>=3,<4", "torch>=2.8,<3", "huggingface-hub>=0.34,<2"]
 tts = ["pocket-tts>=3.3,<3.4", "torch>=2.8,<3", "huggingface-hub>=0.34,<2", "PyYAML>=6,<7"]
@@ -28,3 +31,9 @@ include = ["app*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

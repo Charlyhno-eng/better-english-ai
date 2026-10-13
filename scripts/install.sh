@@ -18,4 +18,5 @@ fi
 
 uv sync --directory backend --extra dev --extra stt --extra tts --extra pronunciation --locked
 npm ci --prefix frontend
+npm ci --prefix frontend/lint
 echo 'Installation complete. Start both servers, then open Setup in the web app.'

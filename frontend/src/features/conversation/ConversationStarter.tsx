@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { startConversation, type ConversationOpening } from './start';
 import { replyAudioBlob } from './api';
 import { ReplyAudio } from './ReplyAudio';
@@ -29,14 +29,8 @@ export function ConversationStarter({ mode, disabled, onStarted, onBusy }: {
     }
   }
   return <form className="conversation-starter" onSubmit={event => { event.preventDefault(); void submit(); }}>
-    <div className="starter-intro">
-      <span className="starter-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z" /></svg></span>
-      <div><p className="starter-kicker">You choose the topic · AI goes first</p>
-        <h2>A good conversation starts with curiosity.</h2>
-        <p>Pick something you’d love to talk about. Your English partner will break the ice.</p></div>
-    </div>
     <label htmlFor="conversation-topic">What shall we talk about?</label>
-    <textarea id="conversation-topic" rows={2} maxLength={500} value={topic} disabled={busy || disabled}
+    <textarea id="conversation-topic" rows={1} maxLength={500} value={topic} disabled={busy || disabled}
       aria-describedby="topic-hint" placeholder="A trip to Japan, my favourite films, a job interview…"
       onChange={event => { setTopic(event.target.value); setError(''); }} />
     <div className="topic-suggestions" aria-label="Suggested topics">
@@ -44,7 +38,7 @@ export function ConversationStarter({ mode, disabled, onStarted, onBusy }: {
         <button type="button" key={suggestion} aria-pressed={topic === suggestion} disabled={busy || disabled}
           onClick={() => { setTopic(suggestion); setError(''); }}>{suggestion}</button>)}
     </div>
-    <div className="starter-footer"><p id="topic-hint">{busy ? 'Your partner is preparing the first question…' : 'Just a topic. No perfect English needed.'}</p>
+    <div className="starter-footer"><p id="topic-hint" className="sr-only">{busy ? 'Your partner is preparing the first question…' : 'Enter a topic or choose a suggestion.'}</p>
       <div className="starter-actions"><button className="primary-button" disabled={busy || disabled || !topic.trim()}>
         {busy ? 'Starting conversation…' : 'Let AI start'}<span aria-hidden="true">→</span></button>
         {busy && <button className="secondary-button" type="button" onClick={cancel}>Cancel</button>}</div>
@@ -55,12 +49,10 @@ export function ConversationStarter({ mode, disabled, onStarted, onBusy }: {
 }
 
 export function OpeningMessage({ opening, paused }: { opening: ConversationOpening; paused: boolean }) {
-  const [audio, setAudio] = useState<Blob | null>(null);
-  const [audioError, setAudioError] = useState(false);
-  useEffect(() => {
-    try { setAudio(opening.audio ? replyAudioBlob(opening.audio) : null); setAudioError(false); }
-    catch { setAudio(null); setAudioError(true); }
-  }, [opening]);
+  const { audio, audioError } = useMemo(() => {
+    try { return { audio: opening.audio ? replyAudioBlob(opening.audio) : null, audioError: false }; }
+    catch { return { audio: null, audioError: true }; }
+  }, [opening.audio]);
   return <div className="conversation-turn">
     <p className="conversation-topic"><span>Talking about</span> {opening.topic}</p>
     <article className="message assistant-message"><h2>Your English partner</h2><p>{opening.reply}</p>

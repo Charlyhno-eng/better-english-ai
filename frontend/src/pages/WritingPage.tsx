@@ -59,10 +59,9 @@ export function WritingPage() {
   }
   return <main className="conversation-app">
     <AppHeader />
-    <section className="conversation-heading"><p className="eyebrow">Writing practice</p>
-      <h1>Keep the conversation going.</h1><p>Chat in English and review your language below each reply.</p></section>
+    <section className="conversation-heading"><h1>Keep the conversation going.</h1></section>
     <section className="conversation-thread" aria-label="Written conversation">
-      <div className="thread-toolbar"><span className="thread-label">Your writing partner</span>
+      <div className="thread-toolbar">
         <button type="button" className="secondary-button" onClick={reset}>New conversation</button></div>
       {!turns.length && !opening && !busy && <ConversationStarter key={session} mode="writing"
         disabled={busy} onStarted={setOpening} onBusy={setStarting} />}
@@ -87,10 +86,10 @@ export function WritingPage() {
     </section>
     <form className="writing-form writing-composer" onSubmit={(event) => void submit(event)}>
       <label htmlFor="learner-writing">Your message</label>
-      <textarea id="learner-writing" value={text} disabled={busy || starting} rows={3} maxLength={10000}
+      <textarea id="learner-writing" value={text} disabled={busy || starting} rows={2} maxLength={10000}
         placeholder="Write your next message in English…"
         onChange={(event) => { setText(event.target.value); setError(''); }} />
-      <p className="composer-hint">{text.length} / 10,000 characters. The latest 25 messages provide conversation context. This chat stays in memory until you leave the page.</p>
+      <p className="composer-hint">{text.length} / 10,000</p>
       <div className="composer-actions"><button className="primary-button" disabled={busy || starting || !text.trim()}>
         Send message</button>
         {busy && <button type="button" className="secondary-button" onClick={cancel}>Cancel</button>}</div>

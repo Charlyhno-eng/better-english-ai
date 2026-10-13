@@ -28,7 +28,6 @@ export function useVoiceInput<Result>(
   useEffect(() => {
     if (phase !== 'recording') return;
     const started = performance.now();
-    setElapsed(0);
     const timer = window.setInterval(() => setElapsed(Math.min(MAX_RECORDING_SECONDS,
       Math.floor((performance.now() - started) / 1000))), 250);
     return () => window.clearInterval(timer);
@@ -71,6 +70,7 @@ export function useVoiceInput<Result>(
       if (id !== operation.current) { capture.cancel(); return; }
       request.current = null;
       recorder.current = capture;
+      setElapsed(0);
       changePhase('recording');
     } catch (failure) {
       if (id !== operation.current) return;
@@ -121,7 +121,7 @@ export function useVoiceInput<Result>(
       changePhase('idle');
     }
   }
-  finishRef.current = () => { void finish(); };
+  useEffect(() => { finishRef.current = () => { void finish(); }; });
 
   function retry() {
     if (!pendingRecording || phaseRef.current !== 'idle') return;

@@ -80,15 +80,15 @@ export function SetupPage() {
 
   const installing = status?.models.some((model) => model.state === 'installing');
   return <main className="conversation-app">
-    <AppHeader />
+    <AppHeader configured={status?.glm_configured} />
     <section className="conversation-heading">
-      <h1>Set up your English tutor.</h1>
+      <h1>Settings</h1>
       <p>Save your API key and install the models here. Downloads can take several minutes and need internet access and free disk space. All local models use your CPU.</p>
     </section>
     {error && <p className="error-message" role="alert">{error}</p>}
     {notice && <p role="status">{notice}</p>}
     {!status && <p role="status">Loading setup…</p>}
-    {status && <>
+    {status && <div className="setup-workspace">
       <section className="setup-card">
         <h2>GLM API key</h2>
         <p>{status.glm_configured ? 'A key is configured. You can replace it below.' : 'Add your Z.AI API key for conversation and writing feedback.'}</p>
@@ -113,7 +113,7 @@ export function SetupPage() {
           <button className="primary-button" disabled={pending || !key.trim()}>Save key</button>
         </form>
       </section>
-      <div aria-live="polite" aria-atomic="false">
+      <div className="setup-models" aria-live="polite" aria-atomic="false">
         {status.models.map((model) => <section className="setup-card" key={model.id}>
           <h2>{models[model.id].name}</h2>
           <p>{models[model.id].description}</p>
@@ -122,7 +122,7 @@ export function SetupPage() {
             onClick={() => void install(model.id)}>{model.state === 'failed' ? 'Retry installation' : model.state === 'installing' ? 'Installing…' : 'Install model'}</button>}
         </section>)}
       </div>
-      <p>Installations continue if you leave this page. Once your key and models are ready, <Link to="/">start a conversation</Link>.</p>
-    </>}
+      <p className="setup-footer">Installations continue if you leave this page. Once your key and models are ready, <Link to="/">start a conversation</Link>.</p>
+    </div>}
   </main>;
 }

@@ -1,6 +1,5 @@
 import { AppHeader } from '../components/AppHeader';
 import { useVoiceInput } from '../features/speech/useVoiceInput';
-import { Link } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import { replyAudioBlob, streamVoiceMessage, type HistoryMessage, type VoiceTurn } from '../features/conversation/api';
 import { StreamingAudio } from '../features/conversation/StreamingAudio';
@@ -72,20 +71,15 @@ export function HomePage() {
     : phase === 'sending' ? reviewing ? 'Reviewing your pronunciation…' : incoming ? 'Your English partner is speaking…' : 'Your English partner is preparing a reply…'
     : 'Ready when you are.';
 
-  const activeConversation = !!opening || turns.length > 0 || phase !== 'idle' || !!pendingRecording;
 
   return (
-    <main className={`conversation-app ${activeConversation ? 'conversation-app--voice' : ''}`}>
+    <main className="conversation-app">
       <AppHeader />
       <section className="conversation-heading">
-        <p className="eyebrow">A little practice, every day</p>
         <h1>Let’s talk in English.</h1>
-        <p>Speak naturally. Your AI partner will listen and keep the conversation going.</p>
-        <p>First visit? <Link to="/setup">Set up your models and API key</Link>.</p>
       </section>
       <section className="conversation-thread" aria-label="Conversation">
         <div className="thread-toolbar">
-          <span className="thread-label">Your conversation space</span>
           <button className="secondary-button" onClick={reset} disabled={!opening && !starting && !turns.length && phase === 'idle' && !pendingRecording}>
             New conversation
           </button>
@@ -117,7 +111,7 @@ export function HomePage() {
         </div>}
         <div ref={transcriptEnd} className="conversation-thread-end" />
       </section>
-      <section className={`conversation-composer ${activeConversation ? 'conversation-composer--pinned' : ''}`} aria-label="Record a message">
+      <section className="conversation-composer" aria-label="Record a message">
         <p className={`recording-status ${phase === 'recording' ? 'is-recording' : ''}`} role="status" aria-live="polite">
           <span aria-hidden="true" />{status}
         </p>

@@ -30,3 +30,23 @@ test('unavailable or malformed analysis is surfaced for retry', async () => {
     await assert.rejects(analyzePractice(new Blob(['audio']), 'Hello.', new AbortController().signal), /unexpected pronunciation/);
   } finally { globalThis.fetch = previous; }
 });
+
+
+test('practice retains recognized phonemes and rejects invalid scheduling metrics', async t => {
+  const fetch = t.mock.method(globalThis, 'fetch', async () => Response.json({
+    reference_inferred: false, errors: [], feedback: '', observed_phonemes: ['θ', 'ɪ'], phoneme_error_rate: 0,
+  }));
+  const analyze = () => analyzePractice(new Blob(['audio']), 'Think.', new AbortController().signal);
+  const result = await analyze();
+  assert.deepEqual(result.observed_phonemes, ['θ', 'ɪ']);
+  assert.equal(result.phoneme_error_rate, 0);
+  for (const fields of [{ observed_phonemes: [''], phoneme_error_rate: -1 },
+    { observed_phonemes: [42], phoneme_error_rate: '0' }, {}]) {
+    fetch.mock.mockImplementation(async () => Response.json({
+      reference_inferred: false, errors: [], feedback: '', ...fields,
+    }));
+    const incomplete = await analyze();
+    assert.deepEqual(incomplete.observed_phonemes, []);
+    assert.equal(incomplete.phoneme_error_rate, null);
+  }
+});
